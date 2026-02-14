@@ -1,0 +1,14 @@
+{
+  "name": "clinic-card-reader-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local mock service for Thai ID card reader integration",
+  "main": "mock-card-service.js",
+  "scripts": {
+    "start": "node mock-card-service.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "cors": "^2.8.5"
+  }
+}
