@@ -2,7 +2,10 @@
 <div class="card shadow-sm">
     <div class="card-body">
         <h5><?= $mode === 'create' ? 'Create Visit Record' : 'Edit Visit Record' ?></h5>
-        <p class="text-muted mb-3">Patient: <?= esc($patient['hn'] . ' - ' . $patient['first_name'] . ' ' . $patient['last_name']) ?></p>
+        <div class="d-flex align-items-center gap-3 mb-3">
+            <?= view('components/patient_photo', ['photo' => $patient['photo'] ?? '', 'size' => 72, 'alt' => trim(($patient['first_name'] ?? '') . ' ' . ($patient['last_name'] ?? ''))]) ?>
+            <p class="text-muted mb-0">Patient: <?= esc($patient['hn'] . ' - ' . $patient['first_name'] . ' ' . $patient['last_name']) ?></p>
+        </div>
         <div class="row mb-3">
             <div class="col-md-4">
                 <label class="form-label mb-1" for="voiceLangSelect">Voice Language</label>

@@ -12,7 +12,15 @@
         <h5>ข้อมูลผู้ป่วย (รองรับกรอกมือ)</h5>
         <form method="post" action="/patients/card/import" id="cardForm">
             <?= csrf_field() ?>
+            <input type="hidden" name="photo" value="">
             <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">รูปจากบัตร</label>
+                    <div class="border rounded p-2 text-center bg-light">
+                        <img id="cardPhotoPreview" alt="Card Photo" style="width:100%; height:180px; object-fit:cover; display:none;">
+                        <div id="cardPhotoPlaceholder" class="text-muted small">ยังไม่มีรูป</div>
+                    </div>
+                </div>
                 <div class="col-md-4"><label class="form-label">เลขบัตรประชาชน</label><input class="form-control" name="cid" required></div>
                 <div class="col-md-2"><label class="form-label">คำนำหน้า</label><input class="form-control" name="title_name"></div>
                 <div class="col-md-3"><label class="form-label">ชื่อ</label><input class="form-control" name="first_name" required></div>
@@ -28,25 +36,69 @@
     </div>
 </div>
 <script>
-$('#btnReadCard').on('click', function () {
-    $('#cardStatus').text('กำลังอ่านข้อมูล...');
-    $.post('/api/card/read', {}, function (res) {
-        if (!res.ok) {
-            $('#cardStatus').text('ไม่สามารถอ่านบัตรได้ กรุณากรอกข้อมูลด้วยมือ');
+document.addEventListener("DOMContentLoaded", function () {
+    const btn = document.getElementById("btnReadCard");
+    const status = document.getElementById("cardStatus");
+    const photoPreview = document.getElementById("cardPhotoPreview");
+    const photoPlaceholder = document.getElementById("cardPhotoPlaceholder");
+
+    function setField(name, value) {
+        const el = document.querySelector('input[name="' + name + '"]');
+        if (el) {
+            el.value = value || "";
+        }
+    }
+
+    function setPhoto(photoDataUrl) {
+        if (photoDataUrl) {
+            photoPreview.src = photoDataUrl;
+            photoPreview.style.display = "block";
+            photoPlaceholder.style.display = "none";
             return;
         }
-        const data = res.data || {};
-        $('input[name="cid"]').val(data.cid || '');
-        $('input[name="title_name"]').val(data.title_name || '');
-        $('input[name="first_name"]').val(data.first_name || '');
-        $('input[name="last_name"]').val(data.last_name || '');
-        $('input[name="gender"]').val(data.gender || '');
-        $('input[name="dob"]').val(data.dob || '');
-        $('input[name="address"]').val(data.address || '');
-        $('#cardStatus').text('อ่านข้อมูลสำเร็จ');
-    }).fail(function () {
-        $('#cardStatus').text('Card Reader Service ไม่พร้อมใช้งาน');
+
+        photoPreview.removeAttribute("src");
+        photoPreview.style.display = "none";
+        photoPlaceholder.style.display = "block";
+    }
+
+    btn.addEventListener("click", async function () {
+        status.textContent = "กำลังอ่านข้อมูล...";
+
+        try {
+            const response = await fetch("/api/card/read", {
+                method: "GET",
+                headers: { "Accept": "application/json" },
+                credentials: "same-origin"
+            });
+
+            const res = await response.json();
+            if (!response.ok || !res.ok) {
+                status.textContent = res.message || "ไม่สามารถอ่านบัตรได้ กรุณากรอกข้อมูลด้วยมือ";
+                setPhoto("");
+                setField("photo", "");
+                return;
+            }
+
+            const data = res.data || {};
+            setField("cid", data.cid);
+            setField("title_name", data.title_name);
+            setField("first_name", data.first_name);
+            setField("last_name", data.last_name);
+            setField("gender", data.gender);
+            setField("dob", data.dob);
+            setField("address", data.address);
+            setField("photo", data.photo || "");
+            setPhoto(data.photo || "");
+            status.textContent = "อ่านข้อมูลสำเร็จ";
+        } catch (error) {
+            setField("photo", "");
+            setPhoto("");
+            status.textContent = "Card Reader Service ไม่พร้อมใช้งาน";
+        }
     });
+
+    setPhoto("");
 });
 </script>
 <?= view('layouts/footer') ?>

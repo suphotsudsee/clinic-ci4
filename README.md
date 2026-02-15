@@ -10,7 +10,7 @@
 [Smart Card Reader Hardware]
         |
         v
-[Local Card Reader Service (127.0.0.1:8787)]
+[Local Card Reader Service (127.0.0.1:8888)]
         |
         v
 [CodeIgniter 4 Web App] --- [Session/Auth Filters] --- [Role Control]

@@ -1,6 +1,9 @@
-﻿<?= view('layouts/header', ['title' => 'Visit Timeline']) ?>
+<?= view('layouts/header', ['title' => 'Visit Timeline']) ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">Visit Timeline: <?= esc($patient['hn'] . ' - ' . $patient['first_name'] . ' ' . $patient['last_name']) ?></h4>
+    <div class="d-flex align-items-center gap-3">
+        <?= view('components/patient_photo', ['photo' => $patient['photo'] ?? '', 'size' => 72, 'alt' => trim(($patient['first_name'] ?? '') . ' ' . ($patient['last_name'] ?? ''))]) ?>
+        <h4 class="mb-0">Visit Timeline: <?= esc($patient['hn'] . ' - ' . $patient['first_name'] . ' ' . $patient['last_name']) ?></h4>
+    </div>
     <a href="/visits/new/<?= $patient['id'] ?>" class="btn btn-success">Add Visit</a>
 </div>
 <?php foreach ($visits as $v): ?>

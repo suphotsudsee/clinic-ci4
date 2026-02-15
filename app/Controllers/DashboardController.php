@@ -18,7 +18,7 @@ class DashboardController extends BaseController
             'totalPatients' => $patientModel->countAllResults(),
             'todayVisits' => $visitModel->where('DATE(visit_date)', $today)->countAllResults(),
             'recentVisits' => $visitModel
-                ->select('visits.*, patients.hn, patients.first_name, patients.last_name')
+                ->select('visits.*, patients.hn, patients.first_name, patients.last_name, patients.photo')
                 ->join('patients', 'patients.id = visits.patient_id')
                 ->orderBy('visits.visit_date', 'DESC')
                 ->findAll(10),

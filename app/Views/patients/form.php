@@ -5,6 +5,12 @@
         <form method="post" action="<?= $mode === 'create' ? '/patients/create' : '/patients/update/' . $patient['id'] ?>">
             <?= csrf_field() ?>
             <div class="row g-3">
+                <div class="col-md-2">
+                    <label class="form-label">รูปผู้ป่วย</label>
+                    <div>
+                        <?= view('components/patient_photo', ['photo' => $patient['photo'] ?? '', 'size' => 120, 'alt' => trim(($patient['first_name'] ?? '') . ' ' . ($patient['last_name'] ?? '')), 'radius' => 10]) ?>
+                    </div>
+                </div>
                 <div class="col-md-3"><label class="form-label">HN</label><input class="form-control" name="hn" value="<?= esc($patient['hn'] ?? '') ?>" required></div>
                 <div class="col-md-4"><label class="form-label">เลขบัตรประชาชน</label><input class="form-control" name="cid" value="<?= esc($patient['cid'] ?? '') ?>" required></div>
                 <div class="col-md-2"><label class="form-label">คำนำหน้า</label><input class="form-control" name="title_name" value="<?= esc($patient['title_name'] ?? '') ?>"></div>

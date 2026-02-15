@@ -34,10 +34,11 @@
     <div class="card-header">Recent Visits</div>
     <div class="table-responsive">
         <table class="table table-striped mb-0">
-            <thead><tr><th>Date</th><th>HN</th><th>Name</th><th>Chief Complaint</th></tr></thead>
+            <thead><tr><th>Photo</th><th>Date</th><th>HN</th><th>Name</th><th>Chief Complaint</th></tr></thead>
             <tbody>
             <?php foreach ($recentVisits as $row): ?>
                 <tr>
+                    <td><?= view('components/patient_photo', ['photo' => $row['photo'] ?? '', 'size' => 40, 'alt' => trim(($row['first_name'] ?? '') . ' ' . ($row['last_name'] ?? ''))]) ?></td>
                     <td><?= esc($row['visit_date']) ?></td>
                     <td><?= esc($row['hn']) ?></td>
                     <td><?= esc($row['first_name'] . ' ' . $row['last_name']) ?></td>

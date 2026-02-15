@@ -1,4 +1,4 @@
-<?= view('layouts/header', ['title' => 'ผู้ป่วย']) ?>
+<?= view('layouts/header', ['title' => 'ข้อมูลผู้ป่วย']) ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0">ข้อมูลผู้ป่วย</h4>
     <div>
@@ -12,10 +12,11 @@
 </form>
 <div class="table-responsive bg-white shadow-sm">
 <table class="table table-hover mb-0">
-<thead><tr><th>HN</th><th>CID</th><th>ชื่อ-สกุล</th><th>โทรศัพท์</th><th>จัดการ</th></tr></thead>
+<thead><tr><th>รูป</th><th>HN</th><th>CID</th><th>ชื่อ-สกุล</th><th>โทรศัพท์</th><th>จัดการ</th></tr></thead>
 <tbody>
 <?php foreach ($patients as $p): ?>
 <tr>
+    <td><?= view('components/patient_photo', ['photo' => $p['photo'] ?? '', 'size' => 44, 'alt' => trim(($p['first_name'] ?? '') . ' ' . ($p['last_name'] ?? ''))]) ?></td>
     <td><?= esc($p['hn']) ?></td>
     <td><?= esc($p['cid']) ?></td>
     <td><?= esc(trim($p['title_name'] . ' ' . $p['first_name'] . ' ' . $p['last_name'])) ?></td>

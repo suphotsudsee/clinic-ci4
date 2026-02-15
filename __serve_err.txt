@@ -1,2 +1,2 @@
-[Sat Feb 14 17:58:07 2026] PHP 8.2.12 Development Server (http://0.0.0.0:8080) started
+[Sun Feb 15 10:40:40 2026] PHP 8.2.12 Development Server (http://127.0.0.1:8080) started
 ^C

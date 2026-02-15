@@ -18,6 +18,7 @@ class PatientModel extends Model
         'dob',
         'phone',
         'address',
+        'photo',
         'allergy_note',
         'created_by',
         'updated_by',

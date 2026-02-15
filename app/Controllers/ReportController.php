@@ -27,12 +27,12 @@ class ReportController extends BaseController
         $rows = $this->queryVisits($start, $end);
 
         if (! class_exists('PhpOffice\\PhpSpreadsheet\\Spreadsheet')) {
-            return redirect()->back()->with('error', 'เธขเธฑเธเนเธกเนเธ•เธดเธ”เธ•เธฑเนเธ PhpSpreadsheet');
+            return redirect()->back()->with('error', 'PhpSpreadsheet is not installed');
         }
 
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $sheet->fromArray(['เธงเธฑเธเธ—เธตเน', 'HN', 'เน€เธฅเธเธเธฑเธ•เธฃ', 'เธเธทเนเธญ-เธชเธเธธเธฅ', 'เธญเธฒเธเธฒเธฃเธชเธณเธเธฑเธ', 'เธงเธดเธเธดเธเธเธฑเธข'], null, 'A1');
+        $sheet->fromArray(['Date', 'HN', 'CID', 'Patient Name', 'Chief Complaint', 'Diagnosis'], null, 'A1');
 
         $rowNum = 2;
         foreach ($rows as $row) {
@@ -56,7 +56,7 @@ class ReportController extends BaseController
         exit;
     }
 
-        public function exportPdf()
+    public function exportPdf()
     {
         $start = $this->request->getGet('start') ?: date('Y-m-d');
         $end = $this->request->getGet('end') ?: date('Y-m-d');
@@ -101,10 +101,11 @@ class ReportController extends BaseController
         $dompdf->stream($filename, ['Attachment' => 1]);
         exit;
     }
+
     private function queryVisits(string $start, string $end): array
     {
         return (new VisitModel())
-            ->select('visits.*, patients.hn, patients.cid, patients.first_name, patients.last_name')
+            ->select('visits.*, patients.hn, patients.cid, patients.first_name, patients.last_name, patients.photo')
             ->join('patients', 'patients.id = visits.patient_id')
             ->where('DATE(visits.visit_date) >=', $start)
             ->where('DATE(visits.visit_date) <=', $end)

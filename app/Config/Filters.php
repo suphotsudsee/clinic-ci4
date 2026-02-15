@@ -27,7 +27,7 @@ class Filters extends BaseConfig
 
     public array $globals = [
         'before' => [
-            'csrf' => ['except' => ['api/card/read']],
+            'csrf' => ['except' => ['api/card/read', '/api/card/read']],
         ],
         'after' => [
             'toolbar',

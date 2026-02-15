@@ -13,7 +13,7 @@ class VisitController extends BaseController
     {
         $model = new VisitModel();
         $visits = $model
-            ->select('visits.*, patients.hn, patients.first_name, patients.last_name')
+            ->select('visits.*, patients.hn, patients.first_name, patients.last_name, patients.photo')
             ->join('patients', 'patients.id = visits.patient_id')
             ->orderBy('visits.visit_date', 'DESC')
             ->findAll(100);
@@ -54,7 +54,7 @@ class VisitController extends BaseController
 
         AuditLogger::log('create', 'visit', $id, null, $data);
 
-        return redirect()->to('/visits/timeline/' . $patientId)->with('success', 'บันทึกการตรวจเรียบร้อย');
+        return redirect()->to('/visits/timeline/' . $patientId)->with('success', 'Visit saved successfully');
     }
 
     public function edit(int $id)
@@ -91,7 +91,7 @@ class VisitController extends BaseController
         $model->update($id, $data);
         AuditLogger::log('update', 'visit', $id, $old, $data);
 
-        return redirect()->to('/visits/timeline/' . $old['patient_id'])->with('success', 'อัปเดตการตรวจเรียบร้อย');
+        return redirect()->to('/visits/timeline/' . $old['patient_id'])->with('success', 'Visit updated successfully');
     }
 
     public function timeline(int $patientId)

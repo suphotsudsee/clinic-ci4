@@ -8,7 +8,7 @@ Local service that runs on clinic machine and communicates with smart card middl
 2. npm install
 3. npm run start
 
-Default endpoint: `http://127.0.0.1:8787/read-card`
+Default endpoint: `http://127.0.0.1:8888/read`
 
 ## Production design
 - Service runs as local daemon on front-desk PC.

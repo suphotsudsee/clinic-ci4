@@ -1,4 +1,5 @@
-﻿CREATE DATABASE IF NOT EXISTS clinic_ci4 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- Updated: 2026-02-15 (includes patients.photo and visit diseasecode support)
+CREATE DATABASE IF NOT EXISTS clinic_ci4 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE clinic_ci4;
 
 CREATE TABLE users (
@@ -24,6 +25,7 @@ CREATE TABLE patients (
     dob DATE NULL,
     phone VARCHAR(20) NULL,
     address VARCHAR(255) NULL,
+    photo MEDIUMTEXT NULL,
     allergy_note TEXT NULL,
     pdpa_consent_at DATETIME NULL,
     created_by BIGINT UNSIGNED NULL,
@@ -76,8 +78,8 @@ CREATE TABLE audit_logs (
 
 INSERT INTO users (username, password_hash, full_name, role, is_active)
 VALUES
-('admin', '$2y$10$XH13RVsvERLS74EvNfcGt.OhYfxsxCww33wWD2PMW8GZscFWsY4zS', 'ผู้ดูแลระบบ', 'admin', 1),
-('doctor1', '$2y$10$XH13RVsvERLS74EvNfcGt.OhYfxsxCww33wWD2PMW8GZscFWsY4zS', 'นพ.สมชาย', 'doctor', 1),
-('staff1', '$2y$10$XH13RVsvERLS74EvNfcGt.OhYfxsxCww33wWD2PMW8GZscFWsY4zS', 'เจ้าหน้าที่เวชระเบียน', 'staff', 1);
+('admin', '$2y$10$XH13RVsvERLS74EvNfcGt.OhYfxsxCww33wWD2PMW8GZscFWsY4zS', 'เธเธนเนเธ”เธนเนเธฅเธฃเธฐเธเธ', 'admin', 1),
+('doctor1', '$2y$10$XH13RVsvERLS74EvNfcGt.OhYfxsxCww33wWD2PMW8GZscFWsY4zS', 'เธเธ.เธชเธกเธเธฒเธข', 'doctor', 1),
+('staff1', '$2y$10$XH13RVsvERLS74EvNfcGt.OhYfxsxCww33wWD2PMW8GZscFWsY4zS', 'เน€เธเนเธฒเธซเธเนเธฒเธ—เธตเนเน€เธงเธเธฃเธฐเน€เธเธตเธขเธ', 'staff', 1);
 
 -- Password default for seeded users: admin123

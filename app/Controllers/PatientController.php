@@ -124,12 +124,20 @@ class PatientController extends BaseController
             'gender' => trim((string) $this->request->getPost('gender')),
             'dob' => $this->request->getPost('dob') ?: null,
             'address' => trim((string) $this->request->getPost('address')),
+            'photo' => trim((string) $this->request->getPost('photo')),
             'phone' => trim((string) $this->request->getPost('phone')),
             'allergy_note' => trim((string) $this->request->getPost('allergy_note')),
         ];
 
         $exists = $model->where('cid', $data['cid'])->first();
         if ($exists) {
+            if (($data['photo'] ?? '') !== '') {
+                $model->update((int) $exists['id'], [
+                    'photo' => $data['photo'],
+                    'updated_by' => session()->get('user_id'),
+                ]);
+            }
+
             return redirect()->to('/patients/edit/' . $exists['id'])
                 ->with('error', 'พบข้อมูลเลขบัตรนี้แล้ว ระบบพาไปหน้าแก้ไข');
         }

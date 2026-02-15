@@ -48,7 +48,7 @@ $routes->group('users', ['filter' => 'auth'], static function ($routes) {
 });
 
 $routes->group('api/card', static function ($routes) {
-    $routes->post('read', 'Api\\CardController::read');
+    $routes->match(['get', 'post'], 'read', 'Api\\CardController::read');
 });
 
 $routes->get('api/icd10/suggest', 'Api\\IcdController::suggest');

@@ -14,10 +14,11 @@
 </div>
 <div class="table-responsive bg-white shadow-sm">
 <table class="table table-striped mb-0">
-<thead><tr><th>วันที่</th><th>HN</th><th>CID</th><th>ชื่อผู้ป่วย</th><th>อาการสำคัญ</th><th>วินิจฉัย</th></tr></thead>
+<thead><tr><th>รูป</th><th>วันที่</th><th>HN</th><th>CID</th><th>ชื่อผู้ป่วย</th><th>อาการสำคัญ</th><th>วินิจฉัย</th></tr></thead>
 <tbody>
 <?php foreach ($rows as $r): ?>
 <tr>
+    <td><?= view('components/patient_photo', ['photo' => $r['photo'] ?? '', 'size' => 40, 'alt' => trim(($r['first_name'] ?? '') . ' ' . ($r['last_name'] ?? ''))]) ?></td>
     <td><?= esc($r['visit_date']) ?></td>
     <td><?= esc($r['hn']) ?></td>
     <td><?= esc($r['cid']) ?></td>
