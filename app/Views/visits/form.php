@@ -6,13 +6,21 @@
             <?= view('components/patient_photo', ['photo' => $patient['photo'] ?? '', 'size' => 72, 'alt' => trim(($patient['first_name'] ?? '') . ' ' . ($patient['last_name'] ?? ''))]) ?>
             <p class="text-muted mb-0">Patient: <?= esc($patient['hn'] . ' - ' . $patient['first_name'] . ' ' . $patient['last_name']) ?></p>
         </div>
-        <div class="row mb-3">
-            <div class="col-md-4">
+        <div class="row g-2 mb-3 align-items-end">
+            <div class="col-md-3">
                 <label class="form-label mb-1" for="voiceLangSelect">Voice Language</label>
                 <select class="form-select form-select-sm" id="voiceLangSelect">
                     <option value="th-TH" selected>Thai (th-TH)</option>
                     <option value="en-US">English (en-US)</option>
                 </select>
+            </div>
+            <div class="col-md-9">
+                <label class="form-label mb-1 d-block">&nbsp;</label>
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="voiceStartBtn">Start Voice</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="voiceAppendBtn">Append</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" id="voiceStopBtn" disabled>Stop</button>
+                </div>
             </div>
         </div>
 
@@ -25,14 +33,7 @@
                 </div>
 
                 <div class="col-md-8">
-                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-1">
-                        <label class="form-label mb-0" for="chiefComplaintField">Chief Complaint</label>
-                        <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-sm btn-outline-primary" id="voiceChiefStartBtn">Start Voice</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" id="voiceChiefAppendBtn">Append</button>
-                            <button type="button" class="btn btn-sm btn-outline-danger" id="voiceChiefStopBtn" disabled>Stop</button>
-                        </div>
-                    </div>
+                    <label class="form-label mb-1" for="chiefComplaintField">Chief Complaint</label>
                     <input class="form-control" id="chiefComplaintField" name="chief_complaint" value="<?= esc($visit['chief_complaint'] ?? '') ?>" required>
                 </div>
 
@@ -42,14 +43,7 @@
                 </div>
 
                 <div class="col-md-12">
-                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-1">
-                        <label class="form-label mb-0" for="diagnosisField">Diagnosis</label>
-                        <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-sm btn-outline-primary" id="voiceStartBtn">Start Voice</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" id="voiceAppendBtn">Append</button>
-                            <button type="button" class="btn btn-sm btn-outline-danger" id="voiceStopBtn" disabled>Stop</button>
-                        </div>
-                    </div>
+                    <label class="form-label mb-1" for="diagnosisField">Diagnosis</label>
                     <textarea class="form-control" rows="2" id="diagnosisField" name="diagnosis" required><?= esc($visit['diagnosis'] ?? '') ?></textarea>
                     <small class="text-muted d-block" id="voiceStatus">Voice status: idle</small>
                     <small class="text-muted">Hotkey: <code>Alt + M</code> starts voice in Diagnosis.</small>
@@ -64,26 +58,12 @@
                 </div>
 
                 <div class="col-md-12">
-                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-1">
-                        <label class="form-label mb-0" for="treatmentField">Treatment</label>
-                        <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-sm btn-outline-primary" id="voiceTreatmentStartBtn">Start Voice</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" id="voiceTreatmentAppendBtn">Append</button>
-                            <button type="button" class="btn btn-sm btn-outline-danger" id="voiceTreatmentStopBtn" disabled>Stop</button>
-                        </div>
-                    </div>
+                    <label class="form-label mb-1" for="treatmentField">Treatment</label>
                     <textarea class="form-control" rows="2" id="treatmentField" name="treatment"><?= esc($visit['treatment'] ?? '') ?></textarea>
                 </div>
 
                 <div class="col-md-12">
-                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-1">
-                        <label class="form-label mb-0" for="medicationField">Medication</label>
-                        <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-sm btn-outline-primary" id="voiceMedicationStartBtn">Start Voice</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" id="voiceMedicationAppendBtn">Append</button>
-                            <button type="button" class="btn btn-sm btn-outline-danger" id="voiceMedicationStopBtn" disabled>Stop</button>
-                        </div>
-                    </div>
+                    <label class="form-label mb-1" for="medicationField">Medication</label>
                     <textarea class="form-control" rows="2" id="medicationField" name="medication"><?= esc($visit['medication'] ?? '') ?></textarea>
                 </div>
 
@@ -106,15 +86,6 @@
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const startBtn = document.getElementById('voiceStartBtn');
     const appendBtn = document.getElementById('voiceAppendBtn');
-    const chiefStartBtn = document.getElementById('voiceChiefStartBtn');
-    const chiefAppendBtn = document.getElementById('voiceChiefAppendBtn');
-    const chiefStopBtn = document.getElementById('voiceChiefStopBtn');
-    const treatmentStartBtn = document.getElementById('voiceTreatmentStartBtn');
-    const treatmentAppendBtn = document.getElementById('voiceTreatmentAppendBtn');
-    const treatmentStopBtn = document.getElementById('voiceTreatmentStopBtn');
-    const medicationStartBtn = document.getElementById('voiceMedicationStartBtn');
-    const medicationAppendBtn = document.getElementById('voiceMedicationAppendBtn');
-    const medicationStopBtn = document.getElementById('voiceMedicationStopBtn');
     const stopBtn = document.getElementById('voiceStopBtn');
     const chiefComplaintField = document.getElementById('chiefComplaintField');
     const diagnosisField = document.getElementById('diagnosisField');
@@ -127,21 +98,12 @@
     const icdSuggestList = document.getElementById('icdSuggestList');
     const icdSuggestStatus = document.getElementById('icdSuggestStatus');
 
-    if (!SpeechRecognition || !startBtn || !appendBtn || !chiefStartBtn || !chiefAppendBtn || !chiefStopBtn || !treatmentStartBtn || !treatmentAppendBtn || !treatmentStopBtn || !medicationStartBtn || !medicationAppendBtn || !medicationStopBtn || !stopBtn || !chiefComplaintField || !diagnosisField || !treatmentField || !medicationField || !statusText || !voiceLangSelect || !diseaseCodePreview || !diseaseCodeHidden || !icdSuggestList || !icdSuggestStatus) {
+    if (!SpeechRecognition || !startBtn || !appendBtn || !stopBtn || !chiefComplaintField || !diagnosisField || !treatmentField || !medicationField || !statusText || !voiceLangSelect || !diseaseCodePreview || !diseaseCodeHidden || !icdSuggestList || !icdSuggestStatus) {
         if (statusText) {
             statusText.textContent = 'Voice status: not supported in this browser.';
         }
         if (startBtn) startBtn.disabled = true;
         if (appendBtn) appendBtn.disabled = true;
-        if (chiefStartBtn) chiefStartBtn.disabled = true;
-        if (chiefAppendBtn) chiefAppendBtn.disabled = true;
-        if (chiefStopBtn) chiefStopBtn.disabled = true;
-        if (treatmentStartBtn) treatmentStartBtn.disabled = true;
-        if (treatmentAppendBtn) treatmentAppendBtn.disabled = true;
-        if (treatmentStopBtn) treatmentStopBtn.disabled = true;
-        if (medicationStartBtn) medicationStartBtn.disabled = true;
-        if (medicationAppendBtn) medicationAppendBtn.disabled = true;
-        if (medicationStopBtn) medicationStopBtn.disabled = true;
         if (stopBtn) stopBtn.disabled = true;
         return;
     }
@@ -153,11 +115,20 @@
 
     let isListening = false;
     let finalText = '';
-    let activeField = diagnosisField;
-    let activeName = 'diagnosis';
+    let activeField = null;
+    let activeName = '';
+    let lastFocusedField = null;
+    let pendingField = null;
+    let listeningModeAppend = false;
     let suggestTimer = null;
     const initialDiagnosis = diagnosisField.value.trim();
     const initialDiseaseCode = diseaseCodeHidden.value.trim();
+    const voiceTargets = [
+        { field: chiefComplaintField, name: 'chief complaint' },
+        { field: diagnosisField, name: 'diagnosis' },
+        { field: treatmentField, name: 'treatment' },
+        { field: medicationField, name: 'medication' }
+    ];
 
     function setStatus(text) {
         statusText.textContent = 'Voice status: ' + text;
@@ -273,20 +244,38 @@
     function setButtons() {
         startBtn.disabled = isListening;
         appendBtn.disabled = isListening;
-        chiefStartBtn.disabled = isListening;
-        chiefAppendBtn.disabled = isListening;
-        chiefStopBtn.disabled = !isListening;
-        treatmentStartBtn.disabled = isListening;
-        treatmentAppendBtn.disabled = isListening;
-        treatmentStopBtn.disabled = !isListening;
-        medicationStartBtn.disabled = isListening;
-        medicationAppendBtn.disabled = isListening;
-        medicationStopBtn.disabled = !isListening;
         stopBtn.disabled = !isListening;
+    }
+
+    function getVoiceTarget() {
+        if (pendingField) {
+            const pending = voiceTargets.find(function (target) {
+                return target.field === pendingField;
+            });
+            if (pending) {
+                pendingField = null;
+                return pending;
+            }
+            pendingField = null;
+        }
+
+        const current = document.activeElement;
+        const byCursor = voiceTargets.find(function (target) {
+            return target.field === current;
+        });
+        if (byCursor) {
+            return byCursor;
+        }
+
+        const byLastFocus = voiceTargets.find(function (target) {
+            return target.field === lastFocusedField;
+        });
+        return byLastFocus || null;
     }
 
     function beginListening(targetField, targetName, shouldAppend) {
         recognition.lang = voiceLangSelect.value || 'th-TH';
+        listeningModeAppend = shouldAppend;
         activeField = targetField;
         activeName = targetName;
         finalText = shouldAppend ? activeField.value.trim() : '';
@@ -305,49 +294,69 @@
         }
     }
 
+    function switchActiveField(targetField) {
+        const target = voiceTargets.find(function (item) {
+            return item.field === targetField;
+        });
+        if (!target || target.field === activeField) {
+            return;
+        }
+
+        activeField = target.field;
+        activeName = target.name;
+        finalText = listeningModeAppend ? activeField.value.trim() : '';
+        if (!listeningModeAppend) {
+            activeField.value = '';
+        }
+        setStatus('listening ' + activeName + ' [' + recognition.lang + '] (' + (listeningModeAppend ? 'append' : 'replace') + ')');
+    }
+
     startBtn.addEventListener('click', function () {
-        beginListening(diagnosisField, 'diagnosis', false);
+        const target = getVoiceTarget();
+        if (!target) {
+            setStatus('select a field first');
+            return;
+        }
+        beginListening(target.field, target.name, false);
     });
 
     appendBtn.addEventListener('click', function () {
-        beginListening(diagnosisField, 'diagnosis', true);
-    });
-
-    chiefStartBtn.addEventListener('click', function () {
-        beginListening(chiefComplaintField, 'chief complaint', false);
-    });
-
-    chiefAppendBtn.addEventListener('click', function () {
-        beginListening(chiefComplaintField, 'chief complaint', true);
-    });
-
-    treatmentStartBtn.addEventListener('click', function () {
-        beginListening(treatmentField, 'treatment', false);
-    });
-
-    treatmentAppendBtn.addEventListener('click', function () {
-        beginListening(treatmentField, 'treatment', true);
-    });
-
-    medicationStartBtn.addEventListener('click', function () {
-        beginListening(medicationField, 'medication', false);
-    });
-
-    medicationAppendBtn.addEventListener('click', function () {
-        beginListening(medicationField, 'medication', true);
+        const target = getVoiceTarget();
+        if (!target) {
+            setStatus('select a field first');
+            return;
+        }
+        beginListening(target.field, target.name, true);
     });
 
     stopBtn.addEventListener('click', function () {
         recognition.stop();
     });
-    chiefStopBtn.addEventListener('click', function () {
-        recognition.stop();
-    });
-    treatmentStopBtn.addEventListener('click', function () {
-        recognition.stop();
-    });
-    medicationStopBtn.addEventListener('click', function () {
-        recognition.stop();
+
+    function capturePendingField() {
+        const current = document.activeElement;
+        const byCursor = voiceTargets.find(function (target) {
+            return target.field === current;
+        });
+        pendingField = byCursor ? byCursor.field : lastFocusedField;
+    }
+
+    startBtn.addEventListener('mousedown', capturePendingField);
+    appendBtn.addEventListener('mousedown', capturePendingField);
+
+    voiceTargets.forEach(function (target) {
+        target.field.addEventListener('focus', function () {
+            lastFocusedField = target.field;
+            if (isListening) {
+                switchActiveField(target.field);
+            }
+        });
+        target.field.addEventListener('click', function () {
+            lastFocusedField = target.field;
+            if (isListening) {
+                switchActiveField(target.field);
+            }
+        });
     });
 
     recognition.onresult = function (event) {

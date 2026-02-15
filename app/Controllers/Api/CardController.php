@@ -76,11 +76,16 @@ class CardController extends BaseController
 
         return [
             'cid' => trim((string) ($card['cid'] ?? '')),
+            'name_th' => trim((string) ($card['name_th'] ?? '')),
+            'name_en' => trim((string) ($card['name_en'] ?? '')),
             'title_name' => (string) ($card['title_name'] ?? $nameParts['title_name']),
             'first_name' => (string) ($card['first_name'] ?? $nameParts['first_name']),
             'last_name' => (string) ($card['last_name'] ?? $nameParts['last_name']),
             'gender' => $this->normalizeGender((string) ($card['gender'] ?? '')),
             'dob' => $this->normalizeDob((string) ($card['dob'] ?? '')),
+            'issuer' => trim((string) ($card['issuer'] ?? '')),
+            'issue_date' => $this->normalizeDob((string) ($card['issue_date'] ?? '')),
+            'expiry_date' => $this->normalizeDob((string) ($card['expiry_date'] ?? '')),
             'address' => trim((string) ($card['address'] ?? '')),
             'photo' => (string) ($card['photo'] ?? ''),
         ];

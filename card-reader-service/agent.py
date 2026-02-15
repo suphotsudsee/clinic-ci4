@@ -86,6 +86,10 @@ def get_full_card_data():
         name_th = decode_thai(read_data(0x0011, 0x64))
         name_en = decode_thai(read_data(0x0075, 0x64))
         dob = decode_thai(read_data(0x00D9, 0x08))
+        gender = decode_thai(read_data(0x00E1, 0x01))
+        issuer = decode_thai(read_data(0x00F6, 0x64))
+        issue_date = decode_thai(read_data(0x0167, 0x08))
+        expiry_date = decode_thai(read_data(0x016F, 0x08))
         address = decode_thai(read_data(0x1579, 0x96))
 
         if not cid:
@@ -106,6 +110,10 @@ def get_full_card_data():
                 "name_th": name_th,
                 "name_en": name_en,
                 "dob": dob,
+                "gender": gender,
+                "issuer": issuer,
+                "issue_date": issue_date,
+                "expiry_date": expiry_date,
                 "address": address,
                 "photo": photo_data_url,
             },
