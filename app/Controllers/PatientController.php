@@ -166,6 +166,7 @@ class PatientController extends BaseController
             'dob' => $this->request->getPost('dob') ?: null,
             'phone' => trim((string) $this->request->getPost('phone')),
             'address' => trim((string) $this->request->getPost('address')),
+            'photo' => trim((string) $this->request->getPost('photo')),
             'allergy_note' => trim((string) $this->request->getPost('allergy_note')),
         ];
     }

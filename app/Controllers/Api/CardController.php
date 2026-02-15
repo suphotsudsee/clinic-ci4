@@ -118,17 +118,20 @@ class CardController extends BaseController
 
     private function normalizeGender(string $gender): string
     {
-        $value = strtoupper(trim($gender));
-        if ($value === 'M' || $value === 'MALE' || $value === 'ชาย') {
-            return 'ชาย';
+        $raw = trim($gender);
+        $value = strtoupper($raw);
+        if ($value === '1' || $value === 'M' || $value === 'MALE') {
+            return 'M';
         }
-        if ($value === 'F' || $value === 'FEMALE' || $value === 'หญิง') {
-            return 'หญิง';
+        if ($value === '2' || $value === 'F' || $value === 'FEMALE') {
+            return 'F';
+        }
+        if ($value === '3' || $value === 'O' || $value === 'OTHER') {
+            return 'O';
         }
 
-        return trim($gender);
+        return '';
     }
-
     private function normalizeDob(string $dob): string
     {
         $value = trim($dob);

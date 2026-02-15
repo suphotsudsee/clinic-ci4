@@ -1,80 +1,139 @@
 <?= view('layouts/header', ['title' => $mode === 'create' ? 'Visit Record' : 'Edit Visit']) ?>
-<div class="card shadow-sm">
-    <div class="card-body">
-        <h5><?= $mode === 'create' ? 'Create Visit Record' : 'Edit Visit Record' ?></h5>
-        <div class="d-flex align-items-center gap-3 mb-3">
-            <?= view('components/patient_photo', ['photo' => $patient['photo'] ?? '', 'size' => 72, 'alt' => trim(($patient['first_name'] ?? '') . ' ' . ($patient['last_name'] ?? ''))]) ?>
-            <p class="text-muted mb-0">Patient: <?= esc($patient['hn'] . ' - ' . $patient['first_name'] . ' ' . $patient['last_name']) ?></p>
+<style>
+.visit-shell {
+    border: 0;
+}
+
+.visit-header {
+    border: 1px solid #b7d0ff;
+    background: #dce9ff;
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.visit-tools {
+    border: 1px solid #b7e2c4;
+    background: #d9f3e0;
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.visit-section {
+    border: 1px solid #cfd8e6;
+    border-radius: 12px;
+    padding: 1rem;
+    background: #f4f7fb;
+}
+
+.visit-section-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: #22324b;
+}
+
+#icdSuggestList {
+    max-height: 220px;
+    overflow: auto;
+}
+</style>
+
+<div class="card shadow-sm visit-shell">
+    <div class="card-body p-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+            <h5 class="mb-0"><?= $mode === 'create' ? 'Create Visit Record' : 'Edit Visit Record' ?></h5>
+            <a class="btn btn-outline-secondary btn-sm" href="/visits/timeline/<?= $patient['id'] ?>">Back</a>
         </div>
-        <div class="row g-2 mb-3 align-items-end">
-            <div class="col-md-3">
-                <label class="form-label mb-1" for="voiceLangSelect">Voice Language</label>
-                <select class="form-select form-select-sm" id="voiceLangSelect">
-                    <option value="th-TH" selected>Thai (th-TH)</option>
-                    <option value="en-US">English (en-US)</option>
-                </select>
+
+        <div class="visit-header mb-3">
+            <div class="d-flex align-items-center gap-3">
+                <?= view('components/patient_photo', ['photo' => $patient['photo'] ?? '', 'size' => 72, 'alt' => trim(($patient['first_name'] ?? '') . ' ' . ($patient['last_name'] ?? ''))]) ?>
+                <div>
+                    <div class="fw-semibold">Patient</div>
+                    <div class="text-muted"><?= esc($patient['hn'] . ' - ' . $patient['first_name'] . ' ' . $patient['last_name']) ?></div>
+                </div>
             </div>
-            <div class="col-md-9">
-                <label class="form-label mb-1 d-block">&nbsp;</label>
-                <div class="d-flex flex-wrap gap-2">
-                    <button type="button" class="btn btn-sm btn-outline-primary" id="voiceStartBtn">Start Voice</button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary" id="voiceAppendBtn">Append</button>
-                    <button type="button" class="btn btn-sm btn-outline-danger" id="voiceStopBtn" disabled>Stop</button>
+        </div>
+
+        <div class="visit-tools mb-3">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label mb-1" for="voiceLangSelect">Voice Language</label>
+                    <select class="form-select form-select-sm" id="voiceLangSelect">
+                        <option value="th-TH" selected>Thai (th-TH)</option>
+                        <option value="en-US">English (en-US)</option>
+                    </select>
+                </div>
+                <div class="col-md-9">
+                    <label class="form-label mb-1 d-block">Voice Controls</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="voiceStartBtn">Start Voice</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="voiceAppendBtn">Append</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" id="voiceStopBtn" disabled>Stop</button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <form method="post" action="<?= $mode === 'create' ? '/visits/create/' . $patient['id'] : '/visits/update/' . $visit['id'] ?>">
             <?= csrf_field() ?>
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <label class="form-label">Visit Date/Time</label>
-                    <input type="datetime-local" class="form-control" name="visit_date" value="<?= esc(isset($visit['visit_date']) ? str_replace(' ', 'T', substr($visit['visit_date'], 0, 16)) : date('Y-m-d\\TH:i')) ?>">
-                </div>
 
-                <div class="col-md-8">
-                    <label class="form-label mb-1" for="chiefComplaintField">Chief Complaint</label>
-                    <input class="form-control" id="chiefComplaintField" name="chief_complaint" value="<?= esc($visit['chief_complaint'] ?? '') ?>" required>
-                </div>
-
-                <div class="col-md-12">
-                    <label class="form-label">Vital Signs</label>
-                    <input class="form-control" name="vital_signs" value="<?= esc($visit['vital_signs'] ?? '') ?>" placeholder="e.g. BP 120/80, BT 37.0">
-                </div>
-
-                <div class="col-md-12">
-                    <label class="form-label mb-1" for="diagnosisField">Diagnosis</label>
-                    <textarea class="form-control" rows="2" id="diagnosisField" name="diagnosis" required><?= esc($visit['diagnosis'] ?? '') ?></textarea>
-                    <small class="text-muted d-block" id="voiceStatus">Voice status: idle</small>
-                    <small class="text-muted">Hotkey: <code>Alt + M</code> starts voice in Diagnosis.</small>
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">Disease Code (auto)</label>
-                    <input class="form-control" id="diseaseCodePreview" value="<?= esc($visit['diseasecode'] ?? '-') ?>" readonly>
-                    <input type="hidden" id="diseaseCodeHidden" name="diseasecode" value="<?= esc($visit['diseasecode'] ?? '') ?>">
-                    <div class="list-group mt-1" id="icdSuggestList" style="max-height: 220px; overflow: auto;"></div>
-                    <small class="text-muted d-block mt-1" id="icdSuggestStatus">Type diagnosis to search ICD10...</small>
-                </div>
-
-                <div class="col-md-12">
-                    <label class="form-label mb-1" for="treatmentField">Treatment</label>
-                    <textarea class="form-control" rows="2" id="treatmentField" name="treatment"><?= esc($visit['treatment'] ?? '') ?></textarea>
-                </div>
-
-                <div class="col-md-12">
-                    <label class="form-label mb-1" for="medicationField">Medication</label>
-                    <textarea class="form-control" rows="2" id="medicationField" name="medication"><?= esc($visit['medication'] ?? '') ?></textarea>
-                </div>
-
-                <div class="col-md-12">
-                    <label class="form-label">Doctor Note</label>
-                    <textarea class="form-control" rows="2" name="doctor_note"><?= esc($visit['doctor_note'] ?? '') ?></textarea>
+            <div class="visit-section mb-3">
+                <div class="visit-section-title">Visit Information</div>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Visit Date/Time</label>
+                        <input type="datetime-local" class="form-control" name="visit_date" value="<?= esc(isset($visit['visit_date']) ? str_replace(' ', 'T', substr($visit['visit_date'], 0, 16)) : date('Y-m-d\\TH:i')) ?>">
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label mb-1" for="chiefComplaintField">Chief Complaint</label>
+                        <input class="form-control" id="chiefComplaintField" name="chief_complaint" value="<?= esc($visit['chief_complaint'] ?? '') ?>" required>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Vital Signs</label>
+                        <input class="form-control" name="vital_signs" value="<?= esc($visit['vital_signs'] ?? '') ?>" placeholder="e.g. BP 120/80, BT 37.0">
+                    </div>
                 </div>
             </div>
 
-            <div class="mt-3">
-                <button class="btn btn-primary">Save</button>
+            <div class="visit-section mb-3">
+                <div class="visit-section-title">Diagnosis & ICD10</div>
+                <div class="row g-3">
+                    <div class="col-lg-8">
+                        <label class="form-label mb-1" for="diagnosisField">Diagnosis</label>
+                        <textarea class="form-control" rows="3" id="diagnosisField" name="diagnosis" required><?= esc($visit['diagnosis'] ?? '') ?></textarea>
+                        <small class="d-none" id="voiceStatus" aria-hidden="true"></small>
+                    </div>
+                    <div class="col-lg-4">
+                        <label class="form-label">Disease Code (auto)</label>
+                        <input class="form-control" id="diseaseCodePreview" value="<?= esc($visit['diseasecode'] ?? '-') ?>" readonly>
+                        <input type="hidden" id="diseaseCodeHidden" name="diseasecode" value="<?= esc($visit['diseasecode'] ?? '') ?>">
+                        <div class="list-group mt-2 d-none" id="icdSuggestList"></div>
+                        <small class="text-muted d-none mt-1" id="icdSuggestStatus">Type diagnosis to search ICD10...</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visit-section">
+                <div class="visit-section-title">Treatment Plan</div>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label class="form-label mb-1" for="treatmentField">Treatment</label>
+                        <textarea class="form-control" rows="2" id="treatmentField" name="treatment"><?= esc($visit['treatment'] ?? '') ?></textarea>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label mb-1" for="medicationField">Medication</label>
+                        <textarea class="form-control" rows="2" id="medicationField" name="medication"><?= esc($visit['medication'] ?? '') ?></textarea>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Doctor Note</label>
+                        <textarea class="form-control" rows="2" name="doctor_note"><?= esc($visit['doctor_note'] ?? '') ?></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3 d-flex gap-2">
+                <button class="btn btn-primary px-4">Save</button>
                 <a class="btn btn-secondary" href="/visits/timeline/<?= $patient['id'] ?>">Back</a>
             </div>
         </form>
@@ -121,6 +180,7 @@
     let pendingField = null;
     let listeningModeAppend = false;
     let suggestTimer = null;
+    let selectedDiseaseLabel = '';
     const initialDiagnosis = diagnosisField.value.trim();
     const initialDiseaseCode = diseaseCodeHidden.value.trim();
     const voiceTargets = [
@@ -142,10 +202,35 @@
         icdSuggestStatus.textContent = text;
     }
 
+    function setIcdUiVisible(visible) {
+        icdSuggestList.classList.toggle('d-none', !visible);
+        icdSuggestStatus.classList.toggle('d-none', !visible);
+    }
+
+    function formatDiseasePreview(code, label) {
+        const normalizedCode = (code || '').trim();
+        const normalizedLabel = (label || '').trim();
+        if (normalizedCode === '' && normalizedLabel === '') {
+            return '-';
+        }
+        if (normalizedCode !== '' && normalizedLabel !== '') {
+            return normalizedCode + ' - ' + normalizedLabel;
+        }
+        return normalizedCode || normalizedLabel;
+    }
+
     function setDiseaseCode(code) {
         const value = (code || '').trim();
         diseaseCodeHidden.value = value;
-        diseaseCodePreview.value = value !== '' ? value : '-';
+        diseaseCodePreview.value = formatDiseasePreview(value, selectedDiseaseLabel);
+    }
+
+    function setDiseaseSelection(item) {
+        const code = String(item && item.diseasecode ? item.diseasecode : '').trim();
+        const th = String(item && item.diseasenamethai ? item.diseasenamethai : '').trim();
+        const en = String(item && item.diseasename ? item.diseasename : '').trim();
+        selectedDiseaseLabel = th !== '' ? th : en;
+        setDiseaseCode(code);
     }
 
     function syncSuggestActive(selectedCode) {
@@ -200,9 +285,10 @@
                 btn.appendChild(subEl);
             }
             btn.addEventListener('click', function () {
-                setDiseaseCode(code);
+                setDiseaseSelection(item);
                 syncSuggestActive(code);
                 treatmentField.focus();
+                setIcdUiVisible(false);
             });
 
             icdSuggestList.appendChild(btn);
@@ -215,6 +301,7 @@
             clearSuggestList();
             setIcdStatus('Type at least 2 characters...');
             if (q === initialDiagnosis && initialDiseaseCode !== '') {
+                selectedDiseaseLabel = '';
                 setDiseaseCode(initialDiseaseCode);
             }
             return;
@@ -238,6 +325,7 @@
                 if (items.length === 0) {
                     setIcdStatus('No ICD10 match found.');
                     if (q === initialDiagnosis && initialDiseaseCode !== '') {
+                        selectedDiseaseLabel = '';
                         setDiseaseCode(initialDiseaseCode);
                     }
                     return;
@@ -248,9 +336,9 @@
                 const currentMatch = items.find(function (x) {
                     return (x.diseasecode || '').toUpperCase() === currentCode;
                 });
-                const resolvedCode = currentMatch ? currentMatch.diseasecode : items[0].diseasecode;
-                setDiseaseCode(resolvedCode);
-                syncSuggestActive(resolvedCode);
+                const selectedItem = currentMatch || items[0];
+                setDiseaseSelection(selectedItem);
+                syncSuggestActive(selectedItem.diseasecode);
             })
             .catch(function () {
                 clearSuggestList();
@@ -341,7 +429,7 @@
             setStatus('select a field first');
             return;
         }
-        beginListening(target.field, target.name, false);
+        beginListening(target.field, target.name, true);
     });
 
     appendBtn.addEventListener('click', function () {
@@ -417,9 +505,13 @@
         if (event.altKey && (event.key === 'm' || event.key === 'M')) {
             event.preventDefault();
             if (!isListening) {
-                beginListening(diagnosisField, 'diagnosis', false);
+                beginListening(diagnosisField, 'diagnosis', true);
             }
         }
+    });
+
+    diagnosisField.addEventListener('focus', function () {
+        setIcdUiVisible(true);
     });
 
     diagnosisField.addEventListener('input', scheduleIcdSuggest);
@@ -427,12 +519,14 @@
     if (diagnosisField.value.trim() !== '') {
         scheduleIcdSuggest();
     } else if (diseaseCodeHidden.value.trim() !== '') {
+        selectedDiseaseLabel = '';
         setDiseaseCode(diseaseCodeHidden.value);
         setIcdStatus('Using saved disease code.');
     } else {
         setIcdStatus('Type diagnosis to search ICD10...');
     }
 
+    setIcdUiVisible(false);
     setButtons();
 })();
 </script>

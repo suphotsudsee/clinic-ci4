@@ -50,7 +50,7 @@
                 <div class="col-md-2"><label class="form-label">คำนำหน้า</label><input class="form-control" name="title_name"></div>
                 <div class="col-md-3"><label class="form-label">ชื่อ</label><input class="form-control" name="first_name" required></div>
                 <div class="col-md-3"><label class="form-label">นามสกุล</label><input class="form-control" name="last_name" required></div>
-                <div class="col-md-2"><label class="form-label">เพศ</label><input class="form-control" name="gender"></div>
+                <div class="col-md-2"><label class="form-label">เพศ</label><select class="form-select" name="gender"><option value="">เลือก</option><option value="M">ชาย</option><option value="F">หญิง</option><option value="O">อื่นๆ</option></select></div>
                 <div class="col-md-3"><label class="form-label">วันเกิด</label><input type="date" class="form-control" name="dob"></div>
                 <div class="col-md-7"><label class="form-label">ที่อยู่</label><input class="form-control" name="address"></div>
                 <div class="col-md-4"><label class="form-label">โทรศัพท์</label><input class="form-control" name="phone"></div>
@@ -225,9 +225,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function setField(name, value) {
         const el = document.querySelector('input[name="' + name + '"]');
+        const select = document.querySelector('select[name="' + name + '"]');
+        if (select) {
+            select.value = value || "";
+            return;
+        }
         if (el) {
             el.value = value || "";
         }
+    }
+
+    function normalizeGenderValue(value) {
+        const raw = String(value || "").trim();
+        const upper = raw.toUpperCase();
+        if (upper === "1" || upper === "M" || upper === "MALE") {
+            return "M";
+        }
+        if (upper === "2" || upper === "F" || upper === "FEMALE") {
+            return "F";
+        }
+        if (upper === "3" || upper === "O" || upper === "OTHER") {
+            return "O";
+        }
+        return "";
     }
 
     function setPhoto(photoDataUrl) {
@@ -435,7 +455,7 @@ document.addEventListener("DOMContentLoaded", function () {
             setField("title_name", data.title_name);
             setField("first_name", data.first_name);
             setField("last_name", data.last_name);
-            setField("gender", data.gender);
+            setField("gender", normalizeGenderValue(data.gender));
             setField("dob", data.dob);
             setField("address", data.address);
             setField("photo", data.photo || "");
