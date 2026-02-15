@@ -148,12 +148,34 @@
         diseaseCodePreview.value = value !== '' ? value : '-';
     }
 
+    function syncSuggestActive(selectedCode) {
+        const normalized = (selectedCode || '').trim().toUpperCase();
+        let hasMatch = false;
+
+        Array.from(icdSuggestList.children).forEach(function (el, idx) {
+            const code = String(el.getAttribute('data-code') || '').trim().toUpperCase();
+            const matched = normalized !== '' && code === normalized;
+            el.classList.toggle('active', matched);
+            if (matched) {
+                hasMatch = true;
+            }
+            if (!hasMatch && normalized === '' && idx === 0) {
+                el.classList.add('active');
+            }
+        });
+
+        if (!hasMatch && normalized !== '' && icdSuggestList.firstElementChild) {
+            icdSuggestList.firstElementChild.classList.add('active');
+        }
+    }
+
     function renderSuggestList(items) {
         clearSuggestList();
         if (!items || items.length === 0) {
             return;
         }
 
+        const selectedCode = (diseaseCodeHidden.value || '').trim().toUpperCase();
         items.forEach(function (item, index) {
             const code = (item.diseasecode || '').trim();
             const th = (item.diseasenamethai || '').trim();
@@ -164,7 +186,8 @@
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'list-group-item list-group-item-action';
-            if (index === 0) {
+            btn.setAttribute('data-code', code);
+            if (selectedCode !== '' ? code.toUpperCase() === selectedCode : index === 0) {
                 btn.classList.add('active');
             }
             const titleEl = document.createElement('div');
@@ -178,8 +201,7 @@
             }
             btn.addEventListener('click', function () {
                 setDiseaseCode(code);
-                Array.from(icdSuggestList.children).forEach(function (el) { el.classList.remove('active'); });
-                btn.classList.add('active');
+                syncSuggestActive(code);
                 treatmentField.focus();
             });
 
@@ -226,7 +248,9 @@
                 const currentMatch = items.find(function (x) {
                     return (x.diseasecode || '').toUpperCase() === currentCode;
                 });
-                setDiseaseCode(currentMatch ? currentMatch.diseasecode : items[0].diseasecode);
+                const resolvedCode = currentMatch ? currentMatch.diseasecode : items[0].diseasecode;
+                setDiseaseCode(resolvedCode);
+                syncSuggestActive(resolvedCode);
             })
             .catch(function () {
                 clearSuggestList();

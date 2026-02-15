@@ -12,9 +12,6 @@
         <a class="navbar-brand" href="/dashboard">Clinic CI4</a>
         <?php if (session()->get('isLoggedIn')): ?>
         <div class="d-flex align-items-center gap-2">
-            <?php if (session()->get('role') === 'admin'): ?>
-            <a class="btn btn-sm btn-light" href="/users">Users</a>
-            <?php endif; ?>
             <span class="text-white small ms-2"><?= esc(session()->get('full_name')) ?> (<?= esc(session()->get('role')) ?>)</span>
             <a class="text-white small ms-2" href="/logout">Logout</a>
         </div>
